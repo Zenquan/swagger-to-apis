@@ -1,0 +1,8 @@
+{
+  "docUrl": "http://product-service-8080.stage01.qdama.abc/v2/api-docs",
+  "baseUrl": "/product",
+  "outputDir": "./dist/dropdown",
+  "paths": ["/dropdown/"],
+  "templateDir": "/template/h5-assistant",
+  "language": "js"
+}

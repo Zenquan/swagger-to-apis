@@ -6,7 +6,8 @@
   "scripts": {
     "api:digital": "rimraf ./dist/digital && esno ../src/index --configPath=./apis/digital/codegen.json && prettier --write ./dist/digital/**/*.js",
     "api:order": "rimraf ./dist/order && esno ../src/index --configPath=./apis/order/codegen.json && prettier --write ./dist/order/**/*.js",
-    "api:account": "rimraf ./dist/account && esno ../src/index --configPath=./apis/account/codegen.json && prettier --write ./dist/account/**/*.js"
+    "api:account": "rimraf ./dist/account && esno ../src/index --configPath=./apis/account/codegen.json && prettier --write ./dist/account/**/*.js",
+    "api:dropdown": "rimraf ./dist/dropdown && esno ../src/index --configPath=./apis/dropdown/codegen.json && prettier --write ./dist/dropdown/**/*.js"
   },
   "keywords": [],
   "author": "",
