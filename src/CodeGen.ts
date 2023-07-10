@@ -307,7 +307,7 @@ export class CodeGen {
         description: parameter.description || (parameter as any).items?.description,
         type: type,
         required: parameter.required,
-        init: this.#initBuiltinType[type]
+        init: this.#initBuiltinType[type] ?? [{}]
       }
       properties.push(property)
     }
@@ -466,7 +466,7 @@ export class CodeGen {
           description: prop.description,
           type: propertyType,
           required: definition.required && definition.required.includes(key),
-          init: this.#initBuiltinType[type] ?? 'undefined'
+          init: this.#initBuiltinType[type] ?? [{}]
         }
 
         // fix Result<T>
@@ -752,20 +752,41 @@ export class CodeGen {
     console.log(chalk.green(`[INFO]: 生成 model 成功, models: ${models.length}`))
   }
 
-  private resolveReturn(returnType) {
+  private resolveParamsOrDataOrReturn(data) {
+    if (!data.properties || !Array.isArray(data.properties) || !data.properties.length) return
+    for(let d of data.properties) {
+      if (!Object.keys(this.#initBuiltinType).includes(d.type)) {
+        const regex = /(?<=\.)\w+/g;
+        const match = d.type.match(regex)
+        if (match && match.length) {
+          const t = this.#models.filter(item => item.name === match[0])
+          if(t.length && t[0].properties && t[0].properties.length) {
+            for(const property of t[0].properties) {
+              if (property) {
+                d.init[0][property.name] = property.init
+              }
+            }
+          }
+          this.resolveParamsOrDataOrReturn(d)
+        }
+
+        d.init = JSON.stringify(d.init)
+      }
+    }
+    return data
   }
 
   private async genAPiFunc() {
     for(let operation of this.#operations) {
-      this.#models.filter(item => {
+      this.#models.forEach(item => {
         const paramsType = operation?.paramsType?.split('.')[1]
         if (item.name === paramsType) {
-          operation.params = item
+          operation.params = this.resolveParamsOrDataOrReturn(item)
         }
 
         const dataType = operation?.dataType?.split('.')[1]
         if (item.name === dataType) {
-          operation.data = item
+          operation.data = this.resolveParamsOrDataOrReturn(item)
         }
       })
     }
@@ -799,7 +820,7 @@ export class CodeGen {
       console.log(`[INFO]: 生成 apiFunc..., apiFuncName: ${api.name}, operations: ${operations.length}`)
 
       const text = Mustache.render(apiFuncTemplate, { api, operations })
-      fs.writeFileSync(path.join(apiFuncDir, `${api.name}.${this.#config.language}`), text, fileOptions)
+      fs.writeFileSync(path.join(apiFuncDir, `${api.name}.${this.#config.language}`), text.replace(/&quot;/g, '"'), fileOptions)
     }
 
     console.log(
