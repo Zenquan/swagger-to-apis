@@ -1,0 +1,32 @@
+import { {{#operations}} {{fullName}}, {{/operations}} } from '@/assets/apis'{{^-last}}
+
+{{/-last}}
+
+{{#operations}}
+return {
+  {{#paramsType}}
+  {{params.modelName}}: {
+    {{#params.properties}}
+    // 描述: {{&description}}   类型: {{&type}}   是否必填: {{&required}}
+    {{name}}: {{init}},
+    {{/params.properties}}
+  }
+  {{/paramsType}}
+  {{#dataType}}
+  {{data.modelName}}: {
+    {{#data.properties}}
+    // 描述: {{&description}}   类型: {{&type}}   是否必填: {{&required}}
+    {{name}}: {{init}},
+    {{/data.properties}}
+  }
+  {{/dataType}}
+}{{^-last}}
+
+{{/-last}}
+/**
+ * {{&summary}}
+ */
+await {{fullName}}({{#paramsType}}this.{{params.modelName}}{{/paramsType}}{{#dataType}}this.{{data.modelName}}{{/dataType}}){{^-last}}
+
+{{/-last}}
+{{/operations}}

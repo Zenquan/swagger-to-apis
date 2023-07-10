@@ -1,0 +1,17 @@
+import { get, post } from '@/utils/utils'
+const hostConfig = require('../../hostConfig.js')
+
+const host = hostConfig.host;
+
+{{#operations}}
+/**
+ * {{&summary}}
+ */
+export function {{fullName}}({{#paramsType}}params{{#dataType}}, {{/dataType}}{{/paramsType}}{{#dataType}}data{{/dataType}}{{#hasArgs}}, {{/hasArgs}}config) {
+  return {{method}}(host + '{{&path}}', {{#paramsType}}params{{/paramsType}}{{^paramsType}}undefined{{/paramsType}}{{#hasBody}}, {{#dataType}}data{{/dataType}}{{^dataType}}undefined{{/dataType}}{{/hasBody}}, config)
+}{{^-last}}
+
+{{/-last}}
+{{/operations}}{{^-last}}
+
+{{/-last}}

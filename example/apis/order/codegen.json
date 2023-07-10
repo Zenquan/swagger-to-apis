@@ -1,0 +1,8 @@
+{
+  "docUrl": "http://order-service-8080.stage01.qdama.abc/v2/api-docs",
+  "baseUrl": "/order/shopdutyreport",
+  "outputDir": "./dist/order",
+  "paths": ["/shopdutyreport/"],
+  "templateDir": "/template/h5-assistant",
+  "language": "js"
+}

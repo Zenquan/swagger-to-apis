@@ -1,0 +1,6 @@
+{
+  "docUrl": "http://task-service-8080.stage01.qdama.abc/v2/api-docs",
+  "baseUrl": "/digital/v1",
+  "outputDir": "./dist/digital",
+  "paths": ["/digital/"]
+}

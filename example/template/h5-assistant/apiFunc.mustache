@@ -1,0 +1,29 @@
+import { reactive } from 'vue'
+import { {{#operations}} {{fullName}}, {{/operations}} } from '@/common/api'{{^-last}}
+
+{{/-last}}
+
+{{#operations}}
+{{#paramsType}}
+const {{params.modelName}} = reactive({
+  {{#params.properties}}
+  // 描述: {{&description}}   类型: {{&type}}   是否必填: {{&required}}
+  {{name}}: {{init}},
+  {{/params.properties}}
+})
+{{/paramsType}}
+{{#dataType}}
+const {{data.modelName}} = reactive({
+  {{#data.properties}}
+  // 描述: {{&description}}   类型: {{&type}}   是否必填: {{&required}}
+  {{name}}: {{init}},
+  {{/data.properties}}
+})
+{{/dataType}}
+/**
+ * {{&summary}}
+ */
+await {{fullName}}({{#paramsType}}{{params.modelName}}{{/paramsType}}{{#dataType}}{{data.modelName}}{{/dataType}}){{^-last}}
+
+{{/-last}}
+{{/operations}}

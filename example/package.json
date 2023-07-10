@@ -1,0 +1,20 @@
+{
+  "name": "example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "api:digital": "rimraf ./dist/digital && esno ../src/index --configPath=./apis/digital/codegen.json && prettier --write ./dist/digital/**/*.js",
+    "api:order": "rimraf ./dist/order && esno ../src/index --configPath=./apis/order/codegen.json && prettier --write ./dist/order/**/*.js",
+    "api:account": "rimraf ./dist/account && esno ../src/index --configPath=./apis/account/codegen.json && prettier --write ./dist/account/**/*.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "esno": "^0.16.3",
+    "prettier": "^2.8.8",
+    "rimraf": "^5.0.1"
+  },
+  "dependencies": {}
+}
