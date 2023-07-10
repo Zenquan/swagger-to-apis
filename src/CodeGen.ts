@@ -15,7 +15,8 @@ export interface GenConfig {
   baseUrl: string
   templateDir: string
   outputDir: string
-  paths: string[]
+  paths: string[],
+  language: 'ts' | 'js'
 }
 
 export const defaultConfig: GenConfig = {
@@ -25,6 +26,7 @@ export const defaultConfig: GenConfig = {
   templateDir: '',
   outputDir: '',
   paths: [],
+  language: 'ts'
 }
 
 type HttpMethod = 'get' | 'post'
@@ -50,6 +52,9 @@ interface OperationDef {
   hasBody: boolean
   hasArgs: boolean
   hasReturn: boolean
+  params?: ModelDef
+  data?: ModelDef
+  response?: ModelDef
 }
 
 interface ModelDef {
@@ -58,6 +63,7 @@ interface ModelDef {
   description?: string
   parent?: string
   properties: PropertyDef[]
+  modelName?: string
 }
 
 interface PropertyDef {
@@ -65,6 +71,7 @@ interface PropertyDef {
   description?: string
   type: string
   required?: boolean
+  init: unknown
 }
 
 interface ViewModel extends Record<string, any> {
@@ -87,6 +94,10 @@ function toViewDataList<T extends Record<string, any>>(list: Array<T & ViewModel
 
 function capitalizeFirstLetter(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+function lowerFirstLetter(str: string) {
+  return str.charAt(0).toLowerCase() + str.slice(1)
 }
 
 function extractApiName(path: string) {
@@ -132,6 +143,10 @@ export class CodeGen {
     await this.parsePaths()
 
     await this.genApis()
+
+    await this.genAPiFunc()
+
+    if(this.#config.language == 'js') return
 
     await this.genModels()
   }
@@ -292,6 +307,7 @@ export class CodeGen {
         description: parameter.description || (parameter as any).items?.description,
         type: type,
         required: parameter.required,
+        init: this.#initBuiltinType[type]
       }
       properties.push(property)
     }
@@ -303,6 +319,7 @@ export class CodeGen {
       className: paramsType,
       description: `${operation.summary}`,
       properties: properties,
+      modelName: extractOperationName(path) + 'Params'
     }
     const required = !!properties.some((d) => !!d.required)
 
@@ -449,6 +466,7 @@ export class CodeGen {
           description: prop.description,
           type: propertyType,
           required: definition.required && definition.required.includes(key),
+          init: this.#initBuiltinType[type] ?? 'undefined'
         }
 
         // fix Result<T>
@@ -469,6 +487,7 @@ export class CodeGen {
       className: className,
       description: definition.description,
       properties: properties,
+      modelName: lowerFirstLetter(modelName)
     }
 
     if (this.#models.find((d) => d.name === modelName)) {
@@ -581,6 +600,18 @@ export class CodeGen {
     T3: 'T3',
   }
 
+  #initBuiltinType: Record<string, unknown> = {
+    void: 'undefined',
+    boolean: 'false',
+    string: 'undefined',
+    number: '0',
+    Array: '[]',
+    'Array<boolean>': '[]',
+    'Array<string>': '[]',
+    'Array<number>': '[]',
+    any: 'undefined',
+  }
+
   private isBuiltinType(type: string) {
     return !!this.#builtinType[type]
   }
@@ -671,7 +702,7 @@ export class CodeGen {
       console.log(`[INFO]: 生成 api..., apiName: ${api.name}, operations: ${operations.length}`)
 
       const text = Mustache.render(apiTemplate, { api, operations })
-      fs.writeFileSync(path.join(apisDir, `${api.name}.ts`), text, fileOptions)
+      fs.writeFileSync(path.join(apisDir, `${api.name}.${this.#config.language}`), text, fileOptions)
     }
 
     const baseName = _.camelCase(this.#config.baseUrl.replace(/\//g, ''))
@@ -682,7 +713,7 @@ export class CodeGen {
     }
     const apisTemplate = fs.readFileSync(apisTemplatePath, fileOptions)
     const text = Mustache.render(apisTemplate, { baseName, apis: apis })
-    fs.writeFileSync(path.join(apisDir, `index.ts`), text, fileOptions)
+    fs.writeFileSync(path.join(apisDir, `index.${this.#config.language}`), text, fileOptions)
 
     console.log(
       chalk.green(`[INFO]: 生成 api 成功, apis: ${apis.length}, total operations: ${this.#operations.length}`),
@@ -719,5 +750,60 @@ export class CodeGen {
     fs.writeFileSync(path.join(modelsDir, `index.ts`), text, fileOptions)
 
     console.log(chalk.green(`[INFO]: 生成 model 成功, models: ${models.length}`))
+  }
+
+  private resolveReturn(returnType) {
+  }
+
+  private async genAPiFunc() {
+    for(let operation of this.#operations) {
+      this.#models.filter(item => {
+        const paramsType = operation?.paramsType?.split('.')[1]
+        if (item.name === paramsType) {
+          operation.params = item
+        }
+
+        const dataType = operation?.dataType?.split('.')[1]
+        if (item.name === dataType) {
+          operation.data = item
+        }
+      })
+    }
+
+    const apiFuncDir = path.join(this.#config.outputDir, 'apiFuncs')
+    if (!fs.existsSync(apiFuncDir)) {
+      fs.mkdirSync(apiFuncDir, { recursive: true })
+    }
+
+    const fileOptions = { encoding: 'utf-8' }
+    const apiFuncTemplatePath = path.join(this.#config.templateDir, 'apiFunc.mustache')
+    if (!fs.existsSync(apiFuncTemplatePath)) {
+      throw new Error(`[ERROR]: 模版文件 ${apiFuncTemplatePath} 不存在`)
+    }
+    const apiFuncTemplate = fs.readFileSync(apiFuncTemplatePath, fileOptions)
+
+    const apiNames = [...this.#apis]
+    apiNames.sort()
+    const apis = toViewDataList(
+      apiNames.map((d) => {
+        const name = d
+        return {
+          name,
+        }
+      }),
+    )
+
+    for (const api of apis) {
+      const operations = this.#operations.filter((d) => d.apiName === api.name)
+
+      console.log(`[INFO]: 生成 apiFunc..., apiFuncName: ${api.name}, operations: ${operations.length}`)
+
+      const text = Mustache.render(apiFuncTemplate, { api, operations })
+      fs.writeFileSync(path.join(apiFuncDir, `${api.name}.${this.#config.language}`), text, fileOptions)
+    }
+
+    console.log(
+      chalk.green(`[INFO]: 生成 apiFuncs 成功, apiFuncs: ${apis.length}, total operations: ${this.#operations.length}`),
+    )
   }
 }
