@@ -1,15 +1,15 @@
-# swagger-to-ts
+# @jomsou/swagger-to-apis
 
-[![npm](https://img.shields.io/npm/v/swagger-to-ts)](https://www.npmjs.com/package/swagger-to-ts)
-[![npm](https://img.shields.io/npm/dt/swagger-to-ts)](https://www.npmjs.com/package/swagger-to-ts)
-[![GitHub stars](https://img.shields.io/github/stars/arbing/swagger-to-ts?style=social)](https://github.com/arbing/swagger-to-ts)
+[![npm](https://img.shields.io/npm/v/@jomsou/swagger-to-apis)](https://www.npmjs.com/package/@jomsou/swagger-to-apis)
+[![npm](https://img.shields.io/npm/dt/@jomsou/swagger-to-apis)](https://www.npmjs.com/package/@jomsou/swagger-to-apis)
+[![GitHub stars](https://img.shields.io/github/stars/arbing/@jomsou/swagger-to-apis?style=social)](https://github.com/arbing/@jomsou/swagger-to-apis)
 
 > Generate typescript services and models from Swagger
 
 ## Start
 
 ```bash
-yarn add -D swagger-to-ts
+yarn add -D @jomsou/swagger-to-apis
 
-swagger-to-ts --apiUrl https://swagger/v2/api-docs --apiPaths /xx/ --basePath /xxx
+swagger-to-apis --apiUrl https://swagger/v2/api-docs --apiPaths /xx/ --basePath /xxx
 ```
