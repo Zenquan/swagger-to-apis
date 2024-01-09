@@ -1,5 +1,8 @@
 {
-  "sourcePaths": ["./dist/digital/api-docs.json", "./dist/account/api-docs.json"],
+  "sourcePaths": [
+    "./dist/account/api-docs.json", 
+    "./dist/digital/api-docs.json"
+  ],
   "outputFolder": "mock-server",
   "timeout": 180000,
   "port": 8081

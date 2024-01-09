@@ -8,7 +8,7 @@
     "api:order": "rimraf ./dist/order && esno ../src/index --configPath=./apis/order/codegen.json && prettier --write ./dist/order/**/*.js",
     "api:account": "rimraf ./dist/account && esno ../src/index --configPath=./apis/account/codegen.json && prettier --write ./dist/account/**/*.js",
     "api:dropdown": "rimraf ./dist/dropdown && esno ../src/index --configPath=./apis/dropdown/codegen.json && prettier --write ./dist/dropdown/**/*.js",
-    "mock": "swagger-faker gen && swagger-faker run"
+    "mock": "rimraf ./mock-server && swagger-faker gen && swagger-faker run"
   },
   "keywords": [],
   "author": "",

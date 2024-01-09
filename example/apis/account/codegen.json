@@ -1,6 +1,6 @@
 {
   "docUrl": "http://account-service-8080.stage01.qdama.abc/v2/api-docs",
-  "baseUrl": "/account",
+  "baseUrl": "",
   "outputDir": "./dist/account",
   "paths": ["/sysmenu/"],
   "templateDir": "/template/b2b-web",
