@@ -4,7 +4,7 @@ import path from 'path'
 import SwaggerParser from '@apidevtools/swagger-parser'
 import { OpenAPIV2, IJsonSchema } from 'openapi-types'
 import Mustache from 'mustache'
-import { camelCase } from 'lodash-es'
+import _ from 'lodash'
 import ApiSpecConverter from 'api-spec-converter'
 import axios from 'axios'
 import URI from 'urijs'
@@ -115,7 +115,7 @@ function extractApiOperationFullName(path: string) {
   if (arr.length > 3) {
     arr.splice(1, arr.length - 3)
   }
-  return arr.map((d) => camelCase(d)).join('_')
+  return arr.map((d) => _.camelCase(d)).join('_')
 }
 
 export class CodeGen {
@@ -705,7 +705,7 @@ export class CodeGen {
       fs.writeFileSync(path.join(apisDir, `${api.name}.${this.#config.language}`), text, fileOptions)
     }
 
-    const baseName = camelCase(this.#config.baseUrl.replace(/\//g, ''))
+    const baseName = _.camelCase(this.#config.baseUrl.replace(/\//g, ''))
 
     const apisTemplatePath = path.join(this.#config.templateDir, 'apis.mustache')
     if (!fs.existsSync(apisTemplatePath)) {
