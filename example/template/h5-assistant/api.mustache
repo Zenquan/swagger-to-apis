@@ -8,7 +8,7 @@ const host = hostConfig.host;
  * {{&summary}}
  */
 export function {{fullName}}({{#paramsType}}params{{#dataType}}, {{/dataType}}{{/paramsType}}{{#dataType}}data{{/dataType}}{{#hasArgs}}, {{/hasArgs}}config) {
-  return {{method}}(host + '{{&path}}', {{#paramsType}}params{{/paramsType}}{{^paramsType}}undefined{{/paramsType}}{{#hasBody}}, {{#dataType}}data{{/dataType}}{{^dataType}}undefined{{/dataType}}{{/hasBody}}, config)
+  return {{method}}(host + '{{&path}}', {{#paramsType}}params{{/paramsType}}{{^paramsType}}''{{/paramsType}}{{#hasBody}}, {{#dataType}}data{{/dataType}}{{^dataType}}undefined{{/dataType}}{{/hasBody}}, config)
 }{{^-last}}
 
 {{/-last}}

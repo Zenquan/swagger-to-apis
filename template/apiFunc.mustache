@@ -5,7 +5,7 @@ import { {{#operations}} {{fullName}}, {{/operations}} } from '@/common/api'{{^-
 
 {{#operations}}
 {{#paramsType}}
-const {{params.modelName}} = reactive({
+const {{params.modelName}} = reactive<{{paramsType}}>({
   {{#params.properties}}
   // 描述: {{&description}}   类型: {{&type}}   是否必填: {{&required}}
   {{name}}: {{init}},
@@ -13,7 +13,7 @@ const {{params.modelName}} = reactive({
 })
 {{/paramsType}}
 {{#dataType}}
-const {{data.modelName}} = reactive({
+const {{data.modelName}} = reactive<{{dataType}}>({
   {{#data.properties}}
   // 描述: {{&description}}   类型: {{&type}}   是否必填: {{&required}}
   {{name}}: {{init}},
@@ -23,7 +23,7 @@ const {{data.modelName}} = reactive({
 /**
  * {{&summary}}
  */
-await {{fullName}}({{#paramsType}}{{params.modelName}}{{/paramsType}}{{#dataType}}{{data.modelName}}{{/dataType}}){{^-last}}
+const data = await {{fullName}}({{#paramsType}}{{params.modelName}}{{/paramsType}}{{#dataType}}{{data.modelName}}{{/dataType}}){{^-last}}
 
 {{/-last}}
 {{/operations}}

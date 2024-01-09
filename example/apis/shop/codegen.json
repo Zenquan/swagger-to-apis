@@ -1,9 +1,11 @@
 {
   "docUrl": "http://product-service-8080.stage02.qdama.abc/v2/api-docs",
   "baseUrl": "product",
-  "outputDir": "./dist/dropdown",
+  "outputDir": "./dist/shop",
   "paths": [
-    "/dropdown"
+    "/dropdown/getsupervisorlist",
+    "/dropdown/getsapcitylist",
+    "/dropdown/getsapdistrictListv3"
   ],
   "templateDir": "/template/h5-assistant",
   "language": "js"
