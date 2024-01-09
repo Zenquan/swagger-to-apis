@@ -11,7 +11,7 @@
     "template"
   ],
   "scripts": {
-    "clear": "rm -rf ./dist",
+    "clear": "rm -rf ./lib",
     "dev": "yarn clear && ts-node src/index.ts",
     "build": "yarn clear && tsc -p .",
     "test": "yarn clear && yarn build && node lib/index.js",
